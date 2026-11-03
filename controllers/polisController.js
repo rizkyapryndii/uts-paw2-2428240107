@@ -1,14 +1,14 @@
-const doctorModel = require("../models/doctorModel");
+const polisControllerModel = require("../models/doctorModel");
 
-const validateDoctor = (body) => {
+const validatePolis = (body) => {
   const {
     nama,
-    spesialis,
+    asuransi,
     noStr,
   } = body;
 
-  if (!nama || !spesialis || !noStr) {
-    return "Field nama, spesialis, dan noStr wajib diisi";
+  if (!nama || !asuransi || !noStr) {
+    return "Field nama, asuransi, dan noStr wajib diisi";
   }
 
   if (
@@ -21,28 +21,26 @@ const validateDoctor = (body) => {
   return null;
 };
 
-// GET /doctors
-const getDoctors = (req, res) => {
-  const { spesialis } = req.query;
+const getPolis = (req, res) => {
+  const { asuransi } = req.query;
 
-  if (spesialis) {
-    const doctors = doctorModel.getDoctorsBySpesialis(spesialis);
+  if (asuransi) {
+    const polis = polisModel.getPolisAsuransi(asuransi);
 
-    return res.status(200).json(doctors);
+    return res.status(200).json(polis);
   }
 
-  const doctors = doctorModel.getAllDoctors();
+  const polis = polisModel.getAllPolis();
 
-  res.status(200).json(doctors);
+  res.status(200).json(polis);
 };
 
-// GET /doctors/:id
-const getDoctorById = (req, res) => {
+const getPolisById = (req, res) => {
   const id = parseInt(req.params.id);
 
-  const doctor = doctorModel.getDoctorById(id);
+  const polis = polisModel.getPolisById(id);
 
-  if (!doctor) {
+  if (!polis) {
     return res.status(404).json({
       status: "error",
       message: `Data dengan id ${id} tidak ditemukan`,
@@ -50,12 +48,11 @@ const getDoctorById = (req, res) => {
     });
   }
 
-  res.status(200).json(doctor);
+  res.status(200).json(polis);
 };
 
-// POST /doctors
-const createDoctor = (req, res) => {
-  const validationError = validateDoctor(req.body);
+const createPolis = (req, res) => {
+  const validationError = validatePolis(req.body);
 
   if (validationError) {
     return res.status(400).json({
@@ -65,7 +62,7 @@ const createDoctor = (req, res) => {
     });
   }
 
-  const newDoctor = doctorModel.createDoctor({
+  const newPolis = polisModel.createPolis({
     nama: req.body.nama,
     spesialis: req.body.spesialis,
     noStr: req.body.noStr,
@@ -76,17 +73,16 @@ const createDoctor = (req, res) => {
   res.status(201).json({
     status: "success",
     message: "Data dokter berhasil ditambahkan",
-    data: newDoctor,
+    data: newPolis,
   });
 };
 
-// PUT /doctors/:id
-const updateDoctor = (req, res) => {
+const updatePolis = (req, res) => {
   const id = parseInt(req.params.id);
 
-  const existingDoctor = doctorModel.getDoctorById(id);
+  const existingPolis = polisModel.getPolisById(id);
 
-  if (!existingDoctor) {
+  if (!existingPolis) {
     return res.status(404).json({
       status: "error",
       message: `Data dengan id ${id} tidak ditemukan`,
@@ -94,7 +90,7 @@ const updateDoctor = (req, res) => {
     });
   }
 
-  const validationError = validateDoctor(req.body);
+  const validationError = validatePolis(req.body);
 
   if (validationError) {
     return res.status(400).json({
@@ -104,9 +100,9 @@ const updateDoctor = (req, res) => {
     });
   }
 
-  const updatedDoctor = doctorModel.updateDoctor(id, {
+  const updatedPolis = polisModel.updatePolis(id, {
     nama: req.body.nama,
-    spesialis: req.body.spesialis,
+    spesialis: req.body.asuransi,
     noStr: req.body.noStr,
     jadwalPraktik: req.body.jadwalPraktik || "",
     biayaKonsultasi: req.body.biayaKonsultasi ?? 0,
@@ -114,18 +110,17 @@ const updateDoctor = (req, res) => {
 
   res.status(200).json({
     status: "success",
-    message: `Data dokter dengan id ${id} berhasil diubah`,
-    data: updatedDoctor,
+    message: `Data polis dengan id ${id} berhasil diubah`,
+    data: updatedPolis,
   });
 };
 
-// DELETE /doctors/:id
-const deleteDoctor = (req, res) => {
+const deletePolis = (req, res) => {
   const id = parseInt(req.params.id);
 
-  const existingDoctor = doctorModel.getDoctorById(id);
+  const existingPolis = polisModel.getPolisById(id);
 
-  if (!existingDoctor) {
+  if (!existingPolis) {
     return res.status(404).json({
       status: "error",
       message: `Data dengan id ${id} tidak ditemukan`,
@@ -133,15 +128,15 @@ const deleteDoctor = (req, res) => {
     });
   }
 
-  doctorModel.deleteDoctor(id);
+  polisModel.deletePolis(id);
 
   res.status(204).send();
 };
 
 module.exports = {
-  getDoctors,
-  getDoctorById,
-  createDoctor,
-  updateDoctor,
-  deleteDoctor,
+  getPolis,
+  getPolisById,
+  createPolis,
+  updatePolis,
+  deletePolis,
 };
